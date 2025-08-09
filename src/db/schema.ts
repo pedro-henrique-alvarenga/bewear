@@ -6,7 +6,7 @@ export const userTable = pgTable("user", {
   name: text().notNull(),
   email: text().notNull().unique(),
   emailVerified: boolean("email_verified").notNull().default(false),
-  imageUrl: text("image_url").notNull(),
+  imageUrl: text("image_url"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -18,13 +18,13 @@ export const userRelations = relations(userTable, ({ many }) => ({
 
 export const sessionTable = pgTable("session", {
   id: uuid().primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => userTable.id, { onDelete: "cascade" }),
   expiresAt: timestamp("expires_at").notNull(),
   token: text().notNull().unique(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
-  userId: uuid("user_id").notNull().references(() => userTable.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const sessionRelations = relations(sessionTable, ({ one }) => ({
@@ -36,9 +36,9 @@ export const sessionRelations = relations(sessionTable, ({ one }) => ({
 
 export const accountTable = pgTable("account", {
   id: uuid().primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => userTable.id, { onDelete: "cascade" }),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
-  userId: uuid("user_id").notNull().references(() => userTable.id, { onDelete: "cascade" }),
   accessToken: text("access_token"),
   refreshToken: text("refresh_token"),
   idToken: text("id_token"),
