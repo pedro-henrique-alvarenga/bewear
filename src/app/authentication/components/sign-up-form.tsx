@@ -50,7 +50,6 @@ const SignUpForm = () => {
           router.push("/");
         },
         onError: (error) => {
-          console.error(error);
           if (error.error.code === "USER_ALREADY_EXISTS") {
             toast.error("Email já cadastrado. Tente fazer login.");
             form.setError("email", {
