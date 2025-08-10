@@ -1,5 +1,3 @@
-"use client";
-
 import ProductItem from "@/components/shared/product-item";
 import { productTable, productVariantTable } from "@/db/schema";
 
