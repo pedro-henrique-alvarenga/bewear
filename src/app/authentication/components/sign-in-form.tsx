@@ -89,7 +89,7 @@ const SignInForm = () => {
               />
             </CardContent>
             <CardFooter>
-              <Button type="submit">Entrar</Button>
+              <Button type="submit" className="cursor-pointer">Entrar</Button>
             </CardFooter>
           </form>
         </Form>
