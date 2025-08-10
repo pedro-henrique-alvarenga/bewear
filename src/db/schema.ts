@@ -6,7 +6,7 @@ export const userTable = pgTable("user", {
   name: text().notNull(),
   email: text().notNull().unique(),
   emailVerified: boolean("email_verified").notNull().default(false),
-  imageUrl: text("image_url"),
+  image: text(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -56,6 +56,15 @@ export const accountRelations = relations(accountTable, ({ one }) => ({
     references: [userTable.id],
   }),
 }));
+
+export const verificationTable = pgTable("verification", {
+  id: uuid().primaryKey().defaultRandom(),
+  identifier: text().notNull(),
+  value: text().notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
 
 export const categoryTable = pgTable("category", {
   id: uuid().primaryKey().defaultRandom(),
