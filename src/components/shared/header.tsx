@@ -4,6 +4,7 @@ import { LogInIcon, LogOutIcon, MenuIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import Cart from "@/components/shared/cart";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -24,7 +25,9 @@ const Header = () => {
         />
       </Link>
 
-      <div className="flex item-center">
+      <div className="flex item-center gap-3">
+        <Cart />
+
         <Sheet>
           <SheetTrigger asChild>
             <Button variant={"outline"} size="icon" className="cursor-pointer">
