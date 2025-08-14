@@ -79,7 +79,7 @@ export const categoryRelations = relations(categoryTable, ({ many }) => ({
 
 export const productTable = pgTable("product", {
   id: uuid().primaryKey().defaultRandom(),
-  categoryId: uuid("category_id").references(() => categoryTable.id, { onDelete: "set null" }),
+  categoryId: uuid("category_id").notNull().references(() => categoryTable.id, { onDelete: "restrict" }),
   name: text().notNull(),
   slug: text().notNull().unique(),
   description: text().notNull(),
