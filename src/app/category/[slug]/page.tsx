@@ -12,6 +12,7 @@ interface CategoryPageProps {
 
 const CategoryPage = async ({ params } : CategoryPageProps) => {
   const { slug } = await params;
+  
   const category = await db.query.categoryTable.findFirst({
     where: eq(categoryTable.slug, slug),
   });

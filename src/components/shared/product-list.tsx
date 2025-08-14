@@ -9,7 +9,6 @@ interface ProductListProps {
 };
 
 const ProductList = ({title, products} : ProductListProps) => {
-  
   return (
     <div className="space-y-6">
       <h3 className="px-5 font-semibold">{title}</h3>

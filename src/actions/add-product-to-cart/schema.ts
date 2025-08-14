@@ -5,4 +5,4 @@ export const addProductToCartSchema = z.object({
   quantity: z.number().int().min(1).default(1),
 });
 
-export type addProductToCartSchema = z.infer<typeof addProductToCartSchema>;
+export type AddProductToCartSchema = z.infer<typeof addProductToCartSchema>;

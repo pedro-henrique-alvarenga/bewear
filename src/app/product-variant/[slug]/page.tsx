@@ -2,16 +2,14 @@ import { eq } from "drizzle-orm";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
+import ProductActions from "@/app/product-variant/[slug]/components/product-actions";
 import VariantSelector from "@/app/product-variant/[slug]/components/variant-selector";
 import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
 import ProductList from "@/components/shared/product-list";
-import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { productTable, productVariantTable } from "@/db/schema";
 import { formatCentsToBRL } from "@/helpers/money";
-
-import QuantitySelector from "./components/quantity-selector";
 
 interface ProductVariantPageProps {
   params: Promise<{slug: string}>;
@@ -19,6 +17,7 @@ interface ProductVariantPageProps {
 
 const ProductVariantPage = async ({ params }: ProductVariantPageProps) => {
   const { slug } = await params;
+  
   const productVariant = await db.query.productVariantTable.findFirst({
     where: eq(productVariantTable.slug, slug),
     with: {
@@ -64,18 +63,7 @@ const ProductVariantPage = async ({ params }: ProductVariantPageProps) => {
           <h3 className="text-lg font-semibold">{formatCentsToBRL(productVariant.priceInCents)}</h3>
         </div>
 
-        <div className="px-5">
-          <QuantitySelector />
-        </div>
-
-        <div className="px-5 space-y-4 flex flex-col">
-          <Button className="rounded-full cursor-pointer" size="lg" variant="outline">
-            Adicionar ao carrinho
-          </Button>
-          <Button className="rounded-full cursor-pointer" size="lg">
-            Comprar agora
-          </Button>
-        </div>
+        <ProductActions productVariantId={productVariant.id} />
 
         <div className="px-5">
           <p className="text-sm">{productVariant.product.description}</p>

@@ -3,12 +3,12 @@
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 
-import { addProductToCartSchema } from "@/actions/add-product-to-cart/schema";
+import { AddProductToCartSchema, addProductToCartSchema } from "@/actions/add-product-to-cart/schema";
 import { db } from "@/db";
 import { cartItemTable, cartTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
-export const addProductToCart = async (data: addProductToCartSchema) => {
+export const addProductToCart = async (data: AddProductToCartSchema) => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -37,6 +37,7 @@ export const addProductToCart = async (data: addProductToCartSchema) => {
     const [ newCart ] = await db.insert(cartTable).values({
       userId: session.user.id,
     }).returning();
+
     cartId = newCart.id;
   }
 
