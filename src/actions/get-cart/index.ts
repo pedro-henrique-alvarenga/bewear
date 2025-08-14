@@ -38,8 +38,14 @@ export const getCart = async () => {
     return {
       ...newCart,
       cartItems: [],
+      totalPriceInCents: 0,
     };
   }
 
-  return cart;
+  return {
+    ...cart,
+    totalPriceInCents: cart.cartItems.reduce((sum, item) =>
+      sum + item.productVariant.priceInCents * item.quantity, 0,
+    ),
+  };
 }
