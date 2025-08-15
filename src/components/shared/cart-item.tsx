@@ -3,6 +3,7 @@ import { Loader2, MinusIcon, PlusIcon, TrashIcon } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 
+import { addProductToCart } from "@/actions/add-product-to-cart";
 import { decreaseProductQuantityFromCart } from "@/actions/decrease-product-quantity-from-cart";
 import { removeProductFromCart } from "@/actions/remove-product-from-cart";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import { formatCentsToBRL } from "@/helpers/money";
 interface CartItemProps {
   id: string;
   productName: string;
+  productVariantId: string;
   productVariantName: string;
   productVariantImageUrl: string;
   productVariantPriceInCents: number;
@@ -20,6 +22,7 @@ interface CartItemProps {
 const CartItem = ({
   id,
   productName,
+  productVariantId,
   productVariantName,
   productVariantImageUrl,
   productVariantPriceInCents,
@@ -51,6 +54,18 @@ const CartItem = ({
     },
   });
 
+  const { mutate: increaseProductQuantityFromCartMutate, isPending: increaseProductQuantityFromCartIsPending } = useMutation({
+    mutationKey: ["increaseProductQuantityFromCart", id],
+    mutationFn: () => addProductToCart({ productVariantId: productVariantId, quantity: 1 }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      toast.success("Quantidade do produto no carrinho aumentada.");
+    },
+    onError: () => {
+      toast.error("Erro ao aumentar a quantidade do produto no carrinho.");
+    },
+  });
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -77,8 +92,16 @@ const CartItem = ({
               }
             </Button>
             <p className="text-xs font-medium">{quantity}</p>
-            <Button variant="ghost" className="h-8 w-8 cursor-pointer" onClick={() => {}}>
-              <PlusIcon />
+            <Button
+              variant="ghost"
+              className="h-8 w-8 cursor-pointer"
+              disabled={increaseProductQuantityFromCartIsPending}
+              onClick={() => increaseProductQuantityFromCartMutate()}
+            >
+              {increaseProductQuantityFromCartIsPending 
+                ? <Loader2 className="animate-spin" />
+                : <PlusIcon />
+              }
             </Button>
           </div>
         </div>
