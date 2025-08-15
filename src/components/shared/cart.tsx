@@ -2,7 +2,7 @@
 
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { useQuery } from "@tanstack/react-query";
-import { ShoppingBasketIcon } from "lucide-react";
+import { Loader2, ShoppingBasketIcon } from "lucide-react";
 
 import { getCart } from "@/actions/get-cart";
 import CartItem from "@/components/shared/cart-item";
@@ -32,7 +32,18 @@ const Cart = () => {
           <div className="flex flex-col h-full max-h-full overflow-hidden">
             <ScrollArea className="h-full">
               <div className="flex h-full flex-col gap-8">
-                {cartIsLoading && <p>Carregando...</p>}
+                {cartIsLoading && (
+                  <div className="flex flex-col items-center justify-center gap-4 mt-10">
+                    <Loader2 size={32} className="animate-spin" />
+                    <p className="text-sm text-muted-foreground">Carregando...</p>
+                  </div>
+                )}
+                {!cartIsLoading && cart?.cartItems.length === 0 && (
+                  <div className="flex flex-col items-center justify-center gap-4 mt-10">
+                    <ShoppingBasketIcon size={32} className="opacity-50" />
+                    <p className="text-sm text-muted-foreground">Seu carrinho está vazio</p>
+                  </div>
+                )}
                 {cart?.cartItems.map((item) => (
                   <CartItem
                     key={item.id}

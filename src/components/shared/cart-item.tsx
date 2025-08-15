@@ -3,6 +3,7 @@ import { Loader2, MinusIcon, PlusIcon, TrashIcon } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 
+import { decreaseProductQuantityFromCart } from "@/actions/decrease-product-quantity-from-cart";
 import { removeProductFromCart } from "@/actions/remove-product-from-cart";
 import { Button } from "@/components/ui/button";
 import { formatCentsToBRL } from "@/helpers/money";
@@ -26,7 +27,7 @@ const CartItem = ({
 }: CartItemProps) => {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending } = useMutation({
+  const { mutate: removeProductFromCartMutate, isPending: removeProductFromCartIsPending } = useMutation({
     mutationKey: ["removeProductFromCart", id],
     mutationFn: () => removeProductFromCart({ cartItemId: id }),
     onSuccess: () => {
@@ -35,6 +36,18 @@ const CartItem = ({
     },
     onError: () => {
       toast.error("Erro ao remover produto do carrinho.");
+    },
+  });
+
+  const { mutate: decreaseProductQuantityFromCartMutate, isPending: decreaseProductQuantityFromCartIsPending } = useMutation({
+    mutationKey: ["decreaseProductQuantityFromCart", id],
+    mutationFn: () => decreaseProductQuantityFromCart({ cartItemId: id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      toast.success("Quantidade do produto no carrinho diminuída.");
+    },
+    onError: () => {
+      toast.error("Erro ao diminuir a quantidade do produto no carrinho.");
     },
   });
 
@@ -52,8 +65,16 @@ const CartItem = ({
           <p className="text-sm font-semibold">{productName}</p>
           <p className="text-xs font-medium text-muted-foreground">{productVariantName}</p>
           <div className="flex items-center justify-between border rounded-lg w-[100px]">
-            <Button variant="ghost" className="h-8 w-8 cursor-pointer" onClick={() => {}}>
-              <MinusIcon />
+            <Button
+              variant="ghost"
+              className="h-8 w-8 cursor-pointer"
+              disabled={decreaseProductQuantityFromCartIsPending}
+              onClick={() => decreaseProductQuantityFromCartMutate()}
+            >
+              {decreaseProductQuantityFromCartIsPending 
+                ? <Loader2 className="animate-spin" />
+                : <MinusIcon />
+              }
             </Button>
             <p className="text-xs font-medium">{quantity}</p>
             <Button variant="ghost" className="h-8 w-8 cursor-pointer" onClick={() => {}}>
@@ -66,10 +87,10 @@ const CartItem = ({
         <Button
           variant="outline"
           className="h-8 w-8 cursor-pointer"
-          disabled={isPending}
-          onClick={() => mutate()}
+          disabled={removeProductFromCartIsPending}
+          onClick={() => removeProductFromCartMutate()}
         >
-          {isPending 
+          {removeProductFromCartIsPending 
             ? <Loader2 className="animate-spin" />
             : <TrashIcon />
           }
