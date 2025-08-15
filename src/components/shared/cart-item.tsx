@@ -1,6 +1,9 @@
-import { MinusIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Loader2, MinusIcon, PlusIcon, TrashIcon } from "lucide-react";
 import Image from "next/image";
+import { toast } from "sonner";
 
+import { removeProductFromCart } from "@/actions/remove-product-from-cart";
 import { Button } from "@/components/ui/button";
 import { formatCentsToBRL } from "@/helpers/money";
 
@@ -21,6 +24,20 @@ const CartItem = ({
   productVariantPriceInCents,
   quantity
 }: CartItemProps) => {
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["removeProductFromCart", id],
+    mutationFn: () => removeProductFromCart({ cartItemId: id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      toast.success("Produto removido do carrinho.");
+    },
+    onError: () => {
+      toast.error("Erro ao remover produto do carrinho.");
+    },
+  });
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -46,8 +63,16 @@ const CartItem = ({
         </div>
       </div>
       <div className="flex flex-col justify-between items-end gap-4">
-        <Button variant="outline" className="h-8 w-8 cursor-pointer" onClick={() => {}}>
-          <TrashIcon />
+        <Button
+          variant="outline"
+          className="h-8 w-8 cursor-pointer"
+          disabled={isPending}
+          onClick={() => mutate()}
+        >
+          {isPending 
+            ? <Loader2 className="animate-spin" />
+            : <TrashIcon />
+          }
         </Button>
         <p className="text-sm font-bold">
           {formatCentsToBRL(productVariantPriceInCents)}
