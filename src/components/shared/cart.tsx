@@ -1,21 +1,17 @@
 "use client";
 
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { useQuery } from "@tanstack/react-query";
 import { Loader2, ShoppingBasketIcon } from "lucide-react";
 
-import { getCart } from "@/actions/get-cart";
 import CartItem from "@/components/shared/cart-item";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { formatCentsToBRL } from "@/helpers/money";
+import { useCart } from "@/hooks/queries/use-cart";
 
 const Cart = () => {
-  const { data: cart, isPending: cartIsLoading } = useQuery({
-    queryKey: ["cart"],
-    queryFn: () => getCart(),
-  });
+  const { data: cart, isPending: cartIsLoading } = useCart();
   
   return (
     <Sheet>
