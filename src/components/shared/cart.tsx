@@ -2,6 +2,7 @@
 
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { Loader2, ShoppingBasketIcon } from "lucide-react";
+import Link from "next/link";
 
 import CartItem from "@/components/shared/cart-item";
 import { Button } from "@/components/ui/button";
@@ -79,8 +80,10 @@ const Cart = () => {
                 <p className="font-bold">{formatCentsToBRL(cart?.totalPriceInCents ?? 0)}</p>
               </div>
 
-              <Button className="mt-5 rounded-full cursor-pointer" onClick={() => {}}>
-                Finalizar compra
+              <Button asChild className="mt-5 rounded-full cursor-pointer">
+                <Link href="/cart/identification">
+                  Finalizar compra
+                </Link>
               </Button>
             </div>
           )}
