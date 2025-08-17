@@ -1,18 +1,19 @@
 "use client";
 
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
+import { toast } from "sonner";
 import z from "zod";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useCreateShippingAdress } from "@/hooks/mutations/use-create-shipping-adress";
 
 const formSchema = z.object({
   email: z.email("Email inválido"),
@@ -39,6 +40,7 @@ type FormData = z.infer<typeof formSchema>;
 
 const Adresses = () => {
   const [selectedAdress, setSelectedAdress] = useState<string | null>(null);
+  const createShippingAdressMutation = useCreateShippingAdress();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -59,8 +61,15 @@ const Adresses = () => {
   });
 
   const onSubmit = async (formData: FormData) => {
-    // Handle form submission logic here
-    console.log("Form submitted:", formData);
+    try {
+      await createShippingAdressMutation.mutateAsync(formData);
+      toast.success("Endereço adicionado com sucesso.");
+      form.reset();
+      setSelectedAdress(null);
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao adicionar endereço.");
+    }
   };
 
   return (
