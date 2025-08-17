@@ -1,5 +1,6 @@
 import { Loader2, MinusIcon, PlusIcon, TrashIcon } from "lucide-react";
 import Image from "next/image";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { formatCentsToBRL } from "@/helpers/money";
@@ -26,18 +27,40 @@ const CartItem = ({
   productVariantPriceInCents,
   quantity
 }: CartItemProps) => {
-  const {
-    mutate: removeProductFromCartMutate,
-    isPending: removeProductFromCartIsPending
-  } = useRemoveProductFromCart(id);
-  const {
-    mutate: decreaseProductQuantityFromCartMutate,
-    isPending: decreaseProductQuantityFromCartIsPending
-  } = useDecreaseProductQuantityFromCart(id);
-  const {
-    mutate: increaseProductQuantityFromCartMutate,
-    isPending: increaseProductQuantityFromCartIsPending
-  } = useIncreaseProductQuantityFromCart(productVariantId);
+  const removeProductFromCartMutation = useRemoveProductFromCart(id);
+  const decreaseProductQuantityFromCartMutation = useDecreaseProductQuantityFromCart(id);
+  const increaseProductQuantityFromCartMutation = useIncreaseProductQuantityFromCart(productVariantId);
+
+  const handleRemoveProductFromCart = async () => {
+    try {
+      await removeProductFromCartMutation.mutateAsync();
+      toast.success("Produto removido do carrinho.");
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao remover produto do carrinho.");
+    }
+  }
+
+  const handleDecreaseProductQuantityFromCart = async () => {
+    try {
+      await decreaseProductQuantityFromCartMutation.mutateAsync();
+      toast.success("Quantidade do produto no carrinho diminuída.");
+
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao diminuir a quantidade do produto no carrinho.");
+    }
+  }
+
+  const handleIncreaseProductQuantityFromCart = async () => {
+    try {
+      await increaseProductQuantityFromCartMutation.mutateAsync();
+      toast.success("Quantidade do produto no carrinho aumentada.");
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao aumentar a quantidade do produto no carrinho.");
+    }
+  }
 
   return (
     <div className="flex items-center justify-between">
@@ -56,10 +79,10 @@ const CartItem = ({
             <Button
               variant="ghost"
               className="h-8 w-8 cursor-pointer"
-              disabled={decreaseProductQuantityFromCartIsPending}
-              onClick={() => decreaseProductQuantityFromCartMutate()}
+              disabled={decreaseProductQuantityFromCartMutation.isPending}
+              onClick={() => handleDecreaseProductQuantityFromCart()}
             >
-              {decreaseProductQuantityFromCartIsPending 
+              {decreaseProductQuantityFromCartMutation.isPending 
                 ? <Loader2 className="animate-spin" />
                 : <MinusIcon />
               }
@@ -68,10 +91,10 @@ const CartItem = ({
             <Button
               variant="ghost"
               className="h-8 w-8 cursor-pointer"
-              disabled={increaseProductQuantityFromCartIsPending}
-              onClick={() => increaseProductQuantityFromCartMutate()}
+              disabled={increaseProductQuantityFromCartMutation.isPending}
+              onClick={() => handleIncreaseProductQuantityFromCart()}
             >
-              {increaseProductQuantityFromCartIsPending 
+              {increaseProductQuantityFromCartMutation.isPending 
                 ? <Loader2 className="animate-spin" />
                 : <PlusIcon />
               }
@@ -83,10 +106,10 @@ const CartItem = ({
         <Button
           variant="outline"
           className="h-8 w-8 cursor-pointer"
-          disabled={removeProductFromCartIsPending}
-          onClick={() => removeProductFromCartMutate()}
+          disabled={removeProductFromCartMutation.isPending}
+          onClick={() => handleRemoveProductFromCart()}
         >
-          {removeProductFromCartIsPending 
+          {removeProductFromCartMutation.isPending 
             ? <Loader2 className="animate-spin" />
             : <TrashIcon />
           }
