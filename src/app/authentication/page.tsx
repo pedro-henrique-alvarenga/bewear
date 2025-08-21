@@ -1,13 +1,7 @@
-import Header from "@/components/shared/header"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
-
-import SignInForm from "./components/sign-in-form"
-import SignUpForm from "./components/sign-up-form"
+import SignInForm from "@/app/authentication/components/sign-in-form";
+import SignUpForm from "@/app/authentication/components/sign-up-form";
+import Header from "@/components/shared/header";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Authentication = () => {
   return (

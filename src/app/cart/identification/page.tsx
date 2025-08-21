@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { getUserAddresses } from "@/actions/get-user-addresses";
 import Addresses from "@/app/cart/identification/components/addresses";
 import Header from "@/components/shared/header";
 import { db } from "@/db";
@@ -26,12 +27,14 @@ const IdentificationPage = async () => {
     redirect("/");
   }
 
+  const shippingAddresses = await getUserAddresses();
+
   return (
     <>
       <Header />
 
       <div className="px-5">
-        <Addresses />
+        <Addresses shippingAddresses={shippingAddresses} />
 
       </div>
     </>

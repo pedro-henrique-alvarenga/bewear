@@ -45,4 +45,4 @@ export const decreaseProductQuantityFromCart = async (data: DecreaseProductQuant
   
     return { success: true, message: "Quantidade do produto no carrinho diminuída com sucesso!" };
   }
-};
+}

@@ -61,4 +61,4 @@ export const addProductToCart = async (data: AddProductToCartSchema) => {
   }
 
   return { success: true, message: "Produto adicionado ao carrinho com sucesso!" };
-};
+}

@@ -37,4 +37,4 @@ export const removeProductFromCart = async (data: RemoveProductFromCartSchema) =
   await db.delete(cartItemTable).where(eq(cartItemTable.id, cartItem.id));
   
   return { success: true, message: "Produto removido do carrinho com sucesso!" };
-};
+}

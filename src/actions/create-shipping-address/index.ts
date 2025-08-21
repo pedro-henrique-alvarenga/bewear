@@ -35,4 +35,4 @@ export const createShippingAddress = async (data: CreateShippingAddressSchema) =
   }).returning();
 
   return shippingAddress;
-};
+}
