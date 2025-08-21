@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const createShippingAdressSchema = z.object({
+export const createShippingAddressSchema = z.object({
   email: z.email("Email inválido"),
   recipientName: z.string().trim().min(2, "Nome é obrigatório"),
   cpfOrCnpj: z.string().trim().min(14, "CPF é obrigatório").max(18, "CNPJ é obrigatório"),
@@ -15,4 +15,4 @@ export const createShippingAdressSchema = z.object({
   country: z.string().trim().min(2, "País é obrigatório"),
 });
 
-export type CreateShippingAdressSchema = z.infer<typeof createShippingAdressSchema>;
+export type CreateShippingAddressSchema = z.infer<typeof createShippingAddressSchema>;

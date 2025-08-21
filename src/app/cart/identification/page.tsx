@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import Adresses from "@/app/cart/identification/components/adresses";
+import Addresses from "@/app/cart/identification/components/addresses";
 import Header from "@/components/shared/header";
 import { db } from "@/db";
 import { auth } from "@/lib/auth";
@@ -31,7 +31,7 @@ const IdentificationPage = async () => {
       <Header />
 
       <div className="px-5">
-        <Adresses />
+        <Addresses />
 
       </div>
     </>

@@ -2,12 +2,12 @@
 
 import { headers } from "next/headers";
 
-import { CreateShippingAdressSchema, createShippingAdressSchema } from "@/actions/create-shipping-adress/schema";
+import { CreateShippingAddressSchema, createShippingAddressSchema } from "@/actions/create-shipping-address/schema";
 import { db } from "@/db";
 import { shippingAddressTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
-export const createShippingAdress = async (data: CreateShippingAdressSchema) => {
+export const createShippingAddress = async (data: CreateShippingAddressSchema) => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -16,9 +16,9 @@ export const createShippingAdress = async (data: CreateShippingAdressSchema) => 
     throw new Error("Unauthorized");
   }
 
-  createShippingAdressSchema.parse(data);
+  createShippingAddressSchema.parse(data);
 
-  await db.insert(shippingAddressTable).values({
+  const [shippingAddress] = await db.insert(shippingAddressTable).values({
     userId: session.user.id,
     email: data.email,
     recipientName: data.recipientName,
@@ -32,7 +32,7 @@ export const createShippingAdress = async (data: CreateShippingAdressSchema) => 
     city: data.city,
     state: data.state,
     country: data.country,
-  });
+  }).returning();
 
-  return { success: true, message: "Endereço adicionado com sucesso!" };
+  return shippingAddress;
 };

@@ -13,7 +13,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useCreateShippingAdress } from "@/hooks/mutations/use-create-shipping-adress";
+import { useCreateShippingAddress } from "@/hooks/mutations/use-create-shipping-address";
+import { useUserAddresses } from "@/hooks/queries/use-user-addresses";
 
 const formSchema = z.object({
   email: z.email("Email inválido"),
@@ -38,9 +39,10 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-const Adresses = () => {
-  const [selectedAdress, setSelectedAdress] = useState<string | null>(null);
-  const createShippingAdressMutation = useCreateShippingAdress();
+const Addresses = () => {
+  const { data: addresses, isLoading } = useUserAddresses();
+  const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
+  const createShippingAddressMutation = useCreateShippingAddress();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -62,10 +64,10 @@ const Adresses = () => {
 
   const onSubmit = async (formData: FormData) => {
     try {
-      await createShippingAdressMutation.mutateAsync(formData);
+      const newAddress = await createShippingAddressMutation.mutateAsync(formData);
       toast.success("Endereço adicionado com sucesso.");
       form.reset();
-      setSelectedAdress(null);
+      setSelectedAddress(newAddress.id);
     } catch (error) {
       console.error(error);
       toast.error("Erro ao adicionar endereço.");
@@ -78,18 +80,42 @@ const Adresses = () => {
         <CardTitle>Identificação</CardTitle>
       </CardHeader>
       <CardContent>
-        <RadioGroup value={selectedAdress} onValueChange={setSelectedAdress}>
+        <RadioGroup value={selectedAddress} onValueChange={setSelectedAddress}>
+          {addresses?.map((address) => (
+            <Card key={address.id}>
+              <CardContent>
+                <div className="flex items-start space-x-2">
+                  <RadioGroupItem value={address.id} id={address.id} />
+                  <div className="flex-1">
+                    <Label htmlFor={address.id} className="cursor-pointer">
+                      <div>
+                        <p className="text-sm">
+                          {address.recipientName}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {address.street}, {address.number}  
+                          {address.complement && `, ${address.complement}`}, {address.neighborhood},
+                          {" "}{address.city} - {address.state}, CEP: {address.zipCode}
+                        </p>
+                      </div>
+                    </Label>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+
           <Card>
             <CardContent>
-              <div className="flex itecms-center space-x-2">
+              <div className="flex items-center space-x-2">
                 <RadioGroupItem value="add_new" id="add_new" />
-                <Label htmlFor="add_new">Adicionar novo endereço</Label>
+                <Label htmlFor="add_new" className="cursor-pointer">Adicionar novo endereço</Label>
               </div>
             </CardContent>
           </Card>
         </RadioGroup>
 
-        {selectedAdress === "add_new" && (
+        {selectedAddress === "add_new" && (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4 space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
@@ -278,4 +304,4 @@ const Adresses = () => {
   );
 }
  
-export default Adresses;
+export default Addresses;
