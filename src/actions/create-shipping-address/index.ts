@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
 import { CreateShippingAddressSchema, createShippingAddressSchema } from "@/actions/create-shipping-address/schema";
@@ -33,6 +34,8 @@ export const createShippingAddress = async (data: CreateShippingAddressSchema) =
     state: data.state,
     country: data.country,
   }).returning();
+
+  revalidatePath("/cart/identification");
 
   return shippingAddress;
 }

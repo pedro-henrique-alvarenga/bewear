@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { shippingAddressTable } from "@/db/schema";
 import { useCreateShippingAddress } from "@/hooks/mutations/use-create-shipping-address";
+import { useUpdateCartShippingAddress } from "@/hooks/mutations/use-update-cart-shipping-address";
 import { useUserAddresses } from "@/hooks/queries/use-user-addresses";
 
 const formSchema = z.object({
@@ -41,14 +42,16 @@ const formSchema = z.object({
 
 interface AddressesProps {
   shippingAddresses: typeof shippingAddressTable.$inferSelect[];
+  defaultShippingAddressId: string | null;
 }
 
 type FormData = z.infer<typeof formSchema>;
 
-const Addresses = ({ shippingAddresses }: AddressesProps) => {
+const Addresses = ({ shippingAddresses, defaultShippingAddressId }: AddressesProps) => {
   const { data: addresses, isLoading } = useUserAddresses({ initialData: shippingAddresses });
-  const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
+  const [selectedAddress, setSelectedAddress] = useState<string | null>(defaultShippingAddressId);
   const createShippingAddressMutation = useCreateShippingAddress();
+  const updateCartShippingAddressMutation = useUpdateCartShippingAddress();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -74,9 +77,28 @@ const Addresses = ({ shippingAddresses }: AddressesProps) => {
       toast.success("Endereço adicionado com sucesso.");
       form.reset();
       setSelectedAddress(newAddress.id);
+
+      await updateCartShippingAddressMutation.mutateAsync({
+        shippingAddressId: newAddress.id,
+      });
+      toast.success("Endereço associado ao carrinho!");
     } catch (error) {
       console.error(error);
       toast.error("Erro ao adicionar endereço.");
+    }
+  };
+
+  const handleGoToPayment = async () => {
+    if (!selectedAddress || selectedAddress === "add_new") return;
+
+    try {
+      await updateCartShippingAddressMutation.mutateAsync({
+        shippingAddressId: selectedAddress,
+      });
+      toast.success("Endereço selecionado para entrega!");
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao selecionar endereço.");
     }
   };
 
@@ -132,6 +154,21 @@ const Addresses = ({ shippingAddresses }: AddressesProps) => {
               </CardContent>
             </Card>
           </RadioGroup>
+        )}
+
+        {selectedAddress && selectedAddress !== "add_new" && (
+          <div className="mt-4">
+            <Button
+              className="w-full cursor-pointer"
+              disabled={updateCartShippingAddressMutation.isPending}
+              onClick={handleGoToPayment}
+            >
+              {updateCartShippingAddressMutation.isPending
+                ? (<Loader2 className="animate-spin" />)
+                : "Ir para pagamento"
+              }
+            </Button>
+          </div>
         )}
 
         {selectedAddress === "add_new" && (
@@ -314,7 +351,16 @@ const Addresses = ({ shippingAddresses }: AddressesProps) => {
                   )}
                 />
               </div>
-              <Button type="submit" className="w-full cursor-pointer">Salvar endereço</Button>
+              <Button
+                type="submit"
+                className="w-full cursor-pointer"
+                disabled={createShippingAddressMutation.isPending}
+              >
+                {createShippingAddressMutation.isPending
+                  ? (<Loader2 className="animate-spin" />)
+                  : "Salvar endereço"
+                }
+              </Button>
             </form>
           </Form>
         )}
