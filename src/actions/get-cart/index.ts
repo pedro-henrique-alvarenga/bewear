@@ -48,8 +48,9 @@ export const getCart = async () => {
 
   return {
     ...cart,
-    totalPriceInCents: cart.cartItems.reduce((sum, item) =>
-      sum + item.productVariant.priceInCents * item.quantity, 0,
+    totalPriceInCents: cart.cartItems.reduce(
+      (sum, item) => sum + item.productVariant.priceInCents * item.quantity,
+      0,
     ),
   };
 }

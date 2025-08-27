@@ -2,7 +2,9 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { getUserAddresses } from "@/actions/get-user-addresses";
+import CartSummary from "@/app/cart/components/cart-summary";
 import Addresses from "@/app/cart/identification/components/addresses";
+import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
 import { db } from "@/db";
 import { auth } from "@/lib/auth";
@@ -20,7 +22,15 @@ const IdentificationPage = async () => {
     where: (cart, { eq }) => eq(cart.userId, session.user.id),
     with: {
       shippingAddress: true,
-      cartItems: true,
+      cartItems: {
+        with: {
+          productVariant: {
+            with: {
+              product: true,
+            },
+          },
+        },
+      },
     },
   });
 
@@ -30,17 +40,37 @@ const IdentificationPage = async () => {
 
   const shippingAddresses = await getUserAddresses();
 
+  const cartTotalPriceInCents = cart.cartItems.reduce(
+    (sum, item) => sum + item.productVariant.priceInCents * item.quantity,
+    0,
+  );
+
   return (
-    <>
+    <div className="space-y-6">
       <Header />
 
-      <div className="px-5">
+      <div className="px-5 space-y-4">
         <Addresses
           shippingAddresses={shippingAddresses}
           defaultShippingAddressId={cart.shippingAddress?.id || null}
         />
+
+        <CartSummary
+          subtotalInCents={cartTotalPriceInCents}
+          totalInCents={cartTotalPriceInCents}
+          products={cart.cartItems.map((item) => ({
+            id: item.productVariant.id,
+            name: item.productVariant.product.name,
+            variantName: item.productVariant.name,
+            quantity: item.quantity,
+            priceInCents: item.productVariant.priceInCents,
+            imageUrl: item.productVariant.imageUrl,
+          }))}
+        />
       </div>
-    </>
+
+      <Footer />
+    </div>
   );
 }
  
