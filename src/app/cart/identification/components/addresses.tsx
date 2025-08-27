@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, MapPinnedIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
@@ -48,6 +49,7 @@ interface AddressesProps {
 type FormData = z.infer<typeof formSchema>;
 
 const Addresses = ({ shippingAddresses, defaultShippingAddressId }: AddressesProps) => {
+  const router = useRouter();
   const { data: addresses, isLoading } = useUserAddresses({ initialData: shippingAddresses });
   const [selectedAddress, setSelectedAddress] = useState<string | null>(defaultShippingAddressId);
   const createShippingAddressMutation = useCreateShippingAddress();
@@ -96,6 +98,7 @@ const Addresses = ({ shippingAddresses, defaultShippingAddressId }: AddressesPro
         shippingAddressId: selectedAddress,
       });
       toast.success("Endereço selecionado para entrega!");
+      router.push("/cart/confirmation");
     } catch (error) {
       console.error(error);
       toast.error("Erro ao selecionar endereço.");

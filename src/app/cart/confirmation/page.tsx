@@ -1,15 +1,15 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { getUserAddresses } from "@/actions/get-user-addresses";
 import CartSummary from "@/app/cart/components/cart-summary";
-import Addresses from "@/app/cart/identification/components/addresses";
 import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/db";
 import { auth } from "@/lib/auth";
 
-const IdentificationPage = async () => {
+const ConfirmationPage = async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -38,22 +38,48 @@ const IdentificationPage = async () => {
     redirect("/");
   }
 
-  const shippingAddresses = await getUserAddresses();
+  if (!cart?.shippingAddress) {
+    redirect("/cart/identification");
+  }
 
   const cartTotalPriceInCents = cart.cartItems.reduce(
     (sum, item) => sum + item.productVariant.priceInCents * item.quantity,
     0,
   );
-
+  
   return (
     <>
       <Header />
 
       <div className="px-5 space-y-4">
-        <Addresses
-          shippingAddresses={shippingAddresses}
-          defaultShippingAddressId={cart.shippingAddress?.id || null}
-        />
+        <Card>
+          <CardHeader>
+            <CardTitle>Identificação</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <Card>
+              <CardContent>
+                <div>
+                  <p className="text-sm font-medium">
+                    {cart.shippingAddress.recipientName}
+                  </p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    {cart.shippingAddress.street}, {cart.shippingAddress.number}  
+                    {cart.shippingAddress.complement && `, ${cart.shippingAddress.complement}`}, {cart.shippingAddress.neighborhood},
+                    {" "}{cart.shippingAddress.city} - {cart.shippingAddress.state}, CEP: {cart.shippingAddress.zipCode}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Button
+              size="lg"
+              className="w-full rounded-full cursor-pointer"
+            >
+              Finalizar compra
+            </Button>
+          </CardContent>
+        </Card>
 
         <CartSummary
           subtotalInCents={cartTotalPriceInCents}
@@ -74,4 +100,4 @@ const IdentificationPage = async () => {
   );
 }
  
-export default IdentificationPage;
+export default ConfirmationPage;
