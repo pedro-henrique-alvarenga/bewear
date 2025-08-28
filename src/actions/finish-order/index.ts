@@ -28,6 +28,8 @@ export const finishOrder = async () => {
     }
   });
 
+  let orderId: string | undefined;
+
   await db.transaction(async (tx) => {
     if (!cart) {
       throw new Error("Carrinho não encontrado");
@@ -64,6 +66,8 @@ export const finishOrder = async () => {
       throw new Error("Erro ao criar o pedido");
     }
 
+    orderId = order.id;
+
     const ordemItems: (typeof orderItemTable.$inferInsert)[] = cart.cartItems.map((item) => ({
       orderId: order.id,
       productVariantId: item.productVariant.id,
@@ -78,6 +82,10 @@ export const finishOrder = async () => {
 
     await tx.delete(cartTable).where(eq(cartTable.id, cart.id));
   });
+
+  if (!orderId) {
+    throw new Error("Erro ao criar o pedido");
+  }
   
-  return { success: true, message: "Pedido criado com sucesso!" };
+  return { orderId };
 }
