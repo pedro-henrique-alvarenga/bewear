@@ -69,7 +69,6 @@ export const finishOrder = async () => {
       productVariantId: item.productVariant.id,
       quantity: item.quantity,
       name: item.productVariant.name,
-      slug: item.productVariant.slug,
       color: item.productVariant.color,
       priceInCents: item.productVariant.priceInCents,
       imageUrl: item.productVariant.imageUrl,
@@ -79,6 +78,6 @@ export const finishOrder = async () => {
 
     await tx.delete(cartTable).where(eq(cartTable.id, cart.id));
   });
-
+  
   return { success: true, message: "Pedido criado com sucesso!" };
 }

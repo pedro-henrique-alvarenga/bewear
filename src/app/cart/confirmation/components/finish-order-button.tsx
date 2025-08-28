@@ -2,6 +2,7 @@
 
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -10,12 +11,13 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useFinishOrder } from "@/hooks/mutations/use-finish-order";
 
 const FinishOrderButton = () => {
-  const [successDialogIsOpen, setSuccessDialogIsOpen] = useState(true);
+  const [successDialogIsOpen, setSuccessDialogIsOpen] = useState(false);
   const finishOrderMutation = useFinishOrder();
 
   const handleFinishOrder = async () => {
     try {
       await finishOrderMutation.mutateAsync();
+      setSuccessDialogIsOpen(true);
     } catch (error) {
       console.error(error);
       toast.error("Erro ao criar o pedido.");
@@ -55,15 +57,15 @@ const FinishOrderButton = () => {
 
           <DialogFooter>
             <Button
-              className="rounded-full cursor-pointer"
               size="lg"
               variant="outline"
+              className="rounded-full cursor-pointer"
             >
-              Voltar para a loja
+              <Link href="/">Voltar para a loja</Link>
             </Button>
             <Button
-              className="rounded-full cursor-pointer"
               size="lg"
+              className="rounded-full cursor-pointer"
             >
               Ver meus pedidos
             </Button>
