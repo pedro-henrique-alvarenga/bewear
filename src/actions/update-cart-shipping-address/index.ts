@@ -3,7 +3,7 @@
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 
-import { UpdateCartShippingAddressSchema,updateCartShippingAddressSchema } from "@/actions/update-cart-shipping-address/schema";
+import { UpdateCartShippingAddressSchema, updateCartShippingAddressSchema } from "@/actions/update-cart-shipping-address/schema";
 import { db } from "@/db";
 import { cartTable } from "@/db/schema";
 import { auth } from "@/lib/auth";

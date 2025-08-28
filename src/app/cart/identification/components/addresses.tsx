@@ -166,10 +166,10 @@ const Addresses = ({ shippingAddresses, defaultShippingAddressId }: AddressesPro
               disabled={updateCartShippingAddressMutation.isPending}
               onClick={handleGoToPayment}
             >
-              {updateCartShippingAddressMutation.isPending
-                ? (<Loader2 className="animate-spin" />)
-                : "Ir para pagamento"
-              }
+              {updateCartShippingAddressMutation.isPending && (
+                <Loader2 className="animate-spin" />
+              )}
+              Ir para pagamento
             </Button>
           </div>
         )}
@@ -359,10 +359,10 @@ const Addresses = ({ shippingAddresses, defaultShippingAddressId }: AddressesPro
                 className="w-full cursor-pointer"
                 disabled={createShippingAddressMutation.isPending}
               >
-                {createShippingAddressMutation.isPending
-                  ? (<Loader2 className="animate-spin" />)
-                  : "Salvar endereço"
+                {createShippingAddressMutation.isPending &&
+                  (<Loader2 className="animate-spin" />)
                 }
+                Salvar endereço
               </Button>
             </form>
           </Form>
