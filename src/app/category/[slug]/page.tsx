@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 
+import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
 import ProductItem from "@/components/shared/product-item";
 import { db } from "@/db";
@@ -31,6 +32,7 @@ const CategoryPage = async ({ params } : CategoryPageProps) => {
   return (
     <>
       <Header />
+
       <div className="px-5 space-y-6">
         <h2 className="font-semibold text-xl">{category.name}</h2>
         <div className="grid grid-cols-2 gap-4">
@@ -39,6 +41,8 @@ const CategoryPage = async ({ params } : CategoryPageProps) => {
           )}
         </div>
       </div>
+
+      <Footer />
     </>
   );
 }
