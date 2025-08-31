@@ -6,6 +6,7 @@ import CartSummary from "@/app/cart/components/cart-summary";
 import Addresses from "@/app/cart/identification/components/addresses";
 import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/db";
 import { auth } from "@/lib/auth";
 
@@ -55,18 +56,25 @@ const IdentificationPage = async () => {
           defaultShippingAddressId={cart.shippingAddress?.id || null}
         />
 
-        <CartSummary
-          subtotalInCents={cartTotalPriceInCents}
-          totalInCents={cartTotalPriceInCents}
-          products={cart.cartItems.map((item) => ({
-            id: item.productVariant.id,
-            name: item.productVariant.product.name,
-            variantName: item.productVariant.name,
-            quantity: item.quantity,
-            priceInCents: item.productVariant.priceInCents,
-            imageUrl: item.productVariant.imageUrl,
-          }))}
-        />
+        <Card>
+          <CardHeader>
+            <CardTitle>Resumo</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CartSummary
+              subtotalInCents={cartTotalPriceInCents}
+              totalInCents={cartTotalPriceInCents}
+              products={cart.cartItems.map((item) => ({
+                id: item.productVariant.id,
+                name: item.productVariant.product.name,
+                variantName: item.productVariant.name,
+                quantity: item.quantity,
+                priceInCents: item.productVariant.priceInCents,
+                imageUrl: item.productVariant.imageUrl,
+              }))}
+            />
+          </CardContent>
+        </Card>
       </div>
 
       <Footer />
